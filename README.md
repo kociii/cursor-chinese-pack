@@ -91,6 +91,15 @@ npm run apply -- "C:\\Users\\yourname\\AppData\\Local\\Programs\\Cursor"
 npm run restore
 ```
 
+## ⚠️ 注意事项
+
+- **设置访问问题**: 应用汉化补丁后，Cursor 的"首选项"菜单项可能会暂时消失。此时，你可以通过以下方式访问设置：
+  - **macOS**: 按下 `Cmd + Shift + P`，然后输入"Cursor Settings"（或"设置"）
+  - **Windows/Linux**: 按下 `Ctrl + Shift + P`，然后输入"Cursor Settings"（或"设置"）
+
+- **Cursor 版本更新**：当 Cursor 更新后，其核心文件 `workbench.desktop.main.js` 可能会发生变动，这可能导致汉化失效或显示不全。届时，需要社区协作，从新版 Cursor 中提取最新的字符串，更新到 `translations/zh-cn.json` 中。
+- **管理员权限**：在 Windows 系统上，如果汉化失败，请尝试**以管理员身份运行终端**。
+
 ## ⚠️ 免责声明
 
 - 本项目是一个非官方工具，通过修改 Cursor 的核心 `workbench.desktop.main.js` 文件来实现汉化。
@@ -117,11 +126,6 @@ npm run restore
     ```
 5.  **重要**：请确保您的修改符合 JSON 格式。`key` 和 `value` 都必须是使用双引号 `"` 包裹的字符串。
 6.  完成修改后，重新运行 `npm run install` 即可在您的本地看到更改。欢迎通过 Pull Request 将您的贡献提交到本项目！
-
-## ⚠️ 注意事项
-
-- **Cursor 版本更新**：当 Cursor 更新后，其核心文件 `workbench.desktop.main.js` 可能会发生变动，这可能导致汉化失效或显示不全。届时，需要社区协作，从新版 Cursor 中提取最新的字符串，更新到 `translations/zh-cn.json` 中。
-- **管理员权限**：在 Windows 系统上，如果汉化失败，请尝试**以管理员身份运行终端**。
 
 ## 📄 开源协议
 
