@@ -34,12 +34,11 @@
 你可以通过 `git` 克隆本项目：
 
 ```bash
-# 注意：请将下面的地址替换为实际的项目仓库地址
-git clone https://github.com/your-repo/cursor-chinese-patcher.git
-cd cursor-chinese-patcher
+git clone https://github.com/kociii/cursor-chinese-pack.git
+cd cursor-chinese-pack
 ```
 
-或者直接下载 ZIP 压缩包并解压。
+或者直接从 [GitHub 仓库](https://github.com/kociii/cursor-chinese-pack) 下载 ZIP 压缩包并解压。
 
 ### 2. 安装依赖
 
@@ -77,7 +76,7 @@ npm run apply:bilingual
 
 ```bash
 # macOS 示例
-npm run apply -- "/Users/yourname/Applications/Cursor.app"
+npm run apply -- "/Applications/Cursor.app"
 
 # Windows 示例
 npm run apply -- "C:\\Users\\yourname\\AppData\\Local\\Programs\\Cursor"
@@ -90,6 +89,12 @@ npm run apply -- "C:\\Users\\yourname\\AppData\\Local\\Programs\\Cursor"
 ```bash
 npm run restore
 ```
+
+## 📋 项目状态
+
+- **当前支持的 Cursor 版本**：0.20.0 及以下
+- **最近更新日期**：2024年6月
+- **完成度**：约 70%（主要界面元素已翻译）
 
 ## ⚠️ 注意事项
 
@@ -108,7 +113,7 @@ npm run restore
 
 ## 🤝 贡献
 
-欢迎提交 PR 或 Issue 来帮助改进本项目。
+欢迎提交 PR 或 Issue 来帮助改进本项目。请访问 [GitHub 仓库](https://github.com/kociii/cursor-chinese-pack/issues) 提交问题或建议。
 
 ## ✍️ 如何贡献翻译
 
