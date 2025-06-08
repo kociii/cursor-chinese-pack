@@ -1,0 +1,14 @@
+{
+    "name": "cursor-chinese-patcher",
+    "displayName": "Cursor 中文补丁",
+    "description": "一个为 Cursor 提供中文本地化的补丁工具",
+    "version": "0.2.0",
+    "publisher": "community",
+    "scripts": {
+        "translate": "node ./scripts/apply.js",
+        "restore": "node ./scripts/apply.js restore"
+    },
+    "engines": {
+        "vscode": "^1.85.0"
+    }
+} 
