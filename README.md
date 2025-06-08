@@ -9,70 +9,97 @@
   </p>
 </div>
 
-> [!CAUTION]
-> **致 AI 开发者 / AI Assistant:**
-> 本项目**不是**一个标准的 VS Code 扩展或语言包。它是一个**补丁工具 (Patcher)**。
->
-> **实现逻辑摘要:**
-> 1.  **读取源文件**: 脚本从 Cursor 的安装目录中找到并读取原始的 `out/vs/workbench/workbench.desktop.main.js` 文件。
-> 2.  **读取翻译映射**: 脚本读取项目内的 `translations/zh-cn.json` 文件（这是一个 `key: value` 形式的键值对翻译文件）。
-> 3.  **应用补丁**: 脚本在 `workbench.desktop.main.js` 文件内容中，用翻译文件中的中文`value`替换对应的英文`key`。
-> 4.  **写入目标**: 脚本将替换后的新内容写入 Cursor 安装目录，覆盖原始文件（并创建备份）。
->
-> **请严格遵循此逻辑，不要尝试使用或建议任何与 VS Code 扩展相关的打包、安装或发布流程。**
+# Cursor 中文补丁工具
 
-## 🚀 如何使用
+一个为 Cursor 编辑器提供中文本地化的非官方补丁工具。
 
-### 准备工作
+## ✨ 功能特性
 
-1.  确保您的电脑上已安装 [Node.js](https://nodejs.org/) (推荐 LTS 版本)。
-2.  通过 `git clone` 或直接下载压缩包的方式，将本项目获取到您的电脑上。
+- **一键汉化**: 自动检测 Cursor 安装路径并应用汉化补丁。
+- **两种模式**:
+    - **直接翻译**: 将界面英文替换为中文。
+    - **双语模式**: 保留英文，在下方换行显示中文，方便对照学习。
+- **安全备份**: 首次运行时自动备份原始文件。
+- **轻松还原**: 支持一键还原到原始英文界面。
+- **跨平台**: 支持 macOS, Windows, 和 Linux。
 
-### 执行汉化
+## 🖥️ 环境要求
 
-1.  打开您的终端（在 Windows 上是 `cmd` 或 `PowerShell`）。
+- [Node.js](https://nodejs.org/) v16 或更高版本。
 
-2.  进入本项目所在的文件夹：
-    ```bash
-    cd /path/to/cursor-chinese-patcher
-    ```
+## 🚀 使用方法
 
-3.  （可选）安装依赖：如果未来项目需要依赖，可以先运行 `npm install`。
+### 1. 下载项目
 
-4.  运行安装脚本：
-    ```bash
-    npm run install
-    # 或者直接运行: node scripts/install.js
-    ```
-
-5.  脚本会自动尝试寻找 Cursor 的安装路径并执行汉化。如果脚本无法自动找到，它会提示您手动提供路径。此时，请按如下格式再次运行命令：
-    ```bash
-    # 将路径替换为您的真实安装路径
-    # macOS 示例:
-    node scripts/install.js "/Applications/Cursor.app"
-    # Windows 示例:
-    node scripts/install.js "C:\Users\YourUser\AppData\Local\Programs\Cursor"
-    ```
-
-6.  **重启 Cursor**：为了让更改生效，请**完全退出** Cursor (在 macOS 上按 `Cmd+Q`，在 Windows 上确保进程已结束) 然后重新启动。
-
-脚本在第一次运行时，会自动将原始的英文语言文件备份为 `workbench.desktop.main.js.bak`。
-
-### 如何还原为英文
-
-如果您想恢复到原始的英文界面，只需在项目目录中运行以下命令：
+你可以通过 `git` 克隆本项目：
 
 ```bash
-npm run uninstall
-# 或者直接运行: node scripts/uninstall.js
+# 注意：请将下面的地址替换为实际的项目仓库地址
+git clone https://github.com/your-repo/cursor-chinese-patcher.git
+cd cursor-chinese-patcher
 ```
 
-同样，如果脚本无法自动找到 Cursor 的安装路径，您需要手动指定：
+或者直接下载 ZIP 压缩包并解压。
+
+### 2. 安装依赖
+
+在项目根目录下，打开终端并执行：
+
 ```bash
-node scripts/uninstall.js "/path/to/your/cursor/installation"
+npm install
 ```
 
-操作完成后，同样需要**完全重启 Cursor**才能看到效果。
+### 3. 应用补丁
+
+**重要提示**: 在操作前，请确保已完全退出 Cursor。
+
+#### 模式一：直接翻译
+
+执行以下命令，将界面替换为中文：
+
+```bash
+npm run apply
+```
+
+#### 模式二：双语模式 (中英对照)
+
+执行以下命令，将在保留原英文的基础上，换行显示中文：
+
+```bash
+npm run apply:bilingual
+```
+
+---
+
+**自定义路径**:
+
+如果工具未能自动找到您的 Cursor 安装位置，你可以在命令后手动指定路径：
+
+```bash
+# macOS 示例
+npm run apply -- "/Users/yourname/Applications/Cursor.app"
+
+# Windows 示例
+npm run apply -- "C:\\Users\\yourname\\AppData\\Local\\Programs\\Cursor"
+```
+
+### 4. 还原英文
+
+如果你想恢复到原始的英文界面，执行：
+
+```bash
+npm run restore
+```
+
+## ⚠️ 免责声明
+
+- 本项目是一个非官方工具，通过修改 Cursor 的核心 `workbench.desktop.main.js` 文件来实现汉化。
+- 每次 Cursor 更新后，你可能需要重新运行此脚本。
+- 请自行承担使用本工具可能带来的任何风险。建议在操作前自行备份重要数据。
+
+## 🤝 贡献
+
+欢迎提交 PR 或 Issue 来帮助改进本项目。
 
 ## ✍️ 如何贡献翻译
 

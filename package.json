@@ -5,7 +5,8 @@
     "version": "0.2.0",
     "publisher": "community",
     "scripts": {
-        "translate": "node ./scripts/apply.js",
+        "apply": "node ./scripts/apply.js",
+        "apply:bilingual": "node ./scripts/apply.js bilingual",
         "restore": "node ./scripts/apply.js restore"
     },
     "engines": {

@@ -8,14 +8,19 @@ const JS_FILE_SUB_PATH = path.join('out', 'vs', 'workbench');
 // --- 配置结束 ---
 
 /**
- * 自动寻找 Cursor 的安装路径
- * @returns {string} Cursor 的安装路径
+ * 自动寻找或使用指定的 Cursor 安装路径
+ * @param {string | undefined} customPath 用户提供的自定义路径
+ * @returns {string | null} Cursor 的安装路径或 null
  */
-function findCursorPath() {
-    const customPath = process.argv[3]; // 第三个参数现在是路径
+function findCursorPath(customPath) {
     if (customPath) {
-        console.log(`使用了自定义路径: ${customPath}`);
-        return customPath;
+        if (fs.existsSync(customPath)) {
+            console.log(`✅ 使用了自定义路径: ${customPath}`);
+            return customPath;
+        } else {
+            console.error(`❌ 错误: 自定义路径不存在: ${customPath}`);
+            process.exit(1);
+        }
     }
 
     let defaultPath;
@@ -26,7 +31,6 @@ function findCursorPath() {
     } else if (platform === 'win32') { // Windows
         const localAppData = process.env.LOCALAPPDATA;
         const programFiles = process.env.ProgramFiles;
-
         const potentialPaths = [
             localAppData && path.join(localAppData, 'Programs', 'Cursor'),
             programFiles && path.join(programFiles, 'Cursor'),
@@ -51,15 +55,14 @@ function findCursorPath() {
         }
     }
 
-
     if (defaultPath && fs.existsSync(defaultPath)) {
         console.log(`✅ 自动检测到 Cursor 安装路径: ${defaultPath}`);
         return defaultPath;
     }
 
-    console.error('❌ 错误: 未能自动检测到 Cursor 安装路径。');
+    console.error('\n❌ 错误: 未能自动检测到 Cursor 安装路径。');
     console.error('   请在命令后面添加您的 Cursor 安装路径作为参数。');
-    console.error('   例如: npm run translate -- "/path/to/your/cursor/installation"');
+    console.error('   例如: npm run apply -- "/path/to/your/cursor/installation"');
     process.exit(1);
 }
 
@@ -88,10 +91,11 @@ function getPlatformPaths(cursorPath) {
 
 /**
  * 将翻译应用到 Cursor 核心文件
+ * @param {('direct'|'bilingual')} mode 翻译模式
+ * @param {string} cursorPath Cursor 安装路径
  */
-function applyTranslations() {
-    console.log('🚀 开始应用中文语言补丁...');
-    const cursorPath = findCursorPath();
+function applyTranslations(mode, cursorPath) {
+    console.log(`🚀 开始应用中文语言补丁 (模式: ${mode})...`);
     const { targetFile, backupFile } = getPlatformPaths(cursorPath);
 
     // 1. 检查原始文件是否存在
@@ -135,7 +139,17 @@ function applyTranslations() {
         // 通过 `("...")` 或 `('...')` 来定位，避免错误替换
         const regex = new RegExp(`(["'])${escapeRegExp(original)}\\1`, 'g');
         const originalContent = content;
-        content = content.replace(regex, `$1${translated}$1`);
+        
+        let replacementString;
+        if (mode === 'bilingual') {
+            // 在替换字符串中，需要转义 `$` 字符，防止其被误认为特殊替换模式
+            const escapedOriginalForReplacement = original.replace(/\$/g, '$$$$');
+            replacementString = `$1${escapedOriginalForReplacement}\\n${translated}$1`;
+        } else { // 'direct' 模式
+            replacementString = `$1${translated}$1`;
+        }
+        
+        content = content.replace(regex, replacementString);
 
         if (originalContent !== content) {
             replacementsCount++;
@@ -149,7 +163,6 @@ function applyTranslations() {
         console.warn(`\n⚠️  注意：有 ${notFound.length} 个词条在文件中未找到，这可能是因为 Cursor 版本更新。`);
         console.warn('   未找到的词条:', notFound.slice(0, 10).join('", "'), notFound.length > 10 ? '...' : '');
     }
-
 
     if (replacementsCount === 0) {
         console.error('\n❌ 错误: 未执行任何替换。请检查:');
@@ -167,10 +180,10 @@ function applyTranslations() {
 
 /**
  * 从备份还原原始文件
+ * @param {string} cursorPath Cursor 安装路径
  */
-function restoreOriginal() {
+function restoreOriginal(cursorPath) {
     console.log('🚀 开始还原原始英文文件...');
-    const cursorPath = findCursorPath();
     const { targetFile, backupFile } = getPlatformPaths(cursorPath);
 
     if (fs.existsSync(backupFile)) {
@@ -193,11 +206,36 @@ function escapeRegExp(string) {
 }
 
 
-// --- 脚本入口 ---
-const command = process.argv[2];
+/**
+ * 脚本主入口
+ */
+function main() {
+    console.log('--- Cursor 汉化脚本 ---');
+    const args = process.argv.slice(2);
 
-if (command === 'restore') {
-    restoreOriginal();
-} else {
-    applyTranslations();
-} 
+    const isRestore = args.includes('restore');
+
+    let mode = 'direct';
+    if (args.includes('bilingual')) {
+        mode = 'bilingual';
+    }
+
+    // 查找路径参数，它不是 'restore', 'bilingual', 或 'direct'
+    const pathArg = args.find(arg => !['restore', 'bilingual', 'direct'].includes(arg));
+
+    if (isRestore) {
+        console.log('模式: 还原');
+    } else {
+        console.log(`模式: ${mode === 'bilingual' ? '双语 (保留原文)' : '直接翻译'}`);
+    }
+
+    const cursorPath = findCursorPath(pathArg);
+
+    if (isRestore) {
+        restoreOriginal(cursorPath);
+    } else {
+        applyTranslations(mode, cursorPath);
+    }
+}
+
+main(); 
